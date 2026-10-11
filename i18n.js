@@ -282,7 +282,8 @@ var MAP={
 "Woman comfortably positioned in the L Pro head care chamber":"女性舒适地位于 L Pro 头部护理舱中",
 // camera cursor (gesture-cursor.js)
 "CAMERA CURSOR":"摄像头光标","No mouse needed.":"不必使用鼠标。",
-"Your index finger becomes the cursor. Pinch thumb and index finger together to click, or use dwell mode. Video is processed on this device only — nothing is recorded or uploaded.":"食指就是你的光标。拇指与食指捏合即代表点击，也可以使用悬停模式。视频只在本设备上处理——不会被录制或上传。",
+"Your index finger becomes the cursor. Pinch to click, or use dwell mode. Move to the screen's top or bottom edge to scroll. Video is processed on this device only — nothing is recorded or uploaded.":"食指就是你的光标。捏合即代表点击，也可以使用悬停模式。把光标移到屏幕上、下边缘即可滚动页面。视频只在本设备上处理——不会被录制或上传。",
+"Scroll up":"向上滚动","Scroll down":"向下滚动",
 "Turn on camera cursor":"开启摄像头光标","Turn off camera cursor":"关闭摄像头光标","Stop camera cursor":"关闭摄像头光标",
 "Dwell click — hold steady over a target instead of pinching":"悬停点击——对准目标稳定停留即可，无需捏合",
 "The gesture buttons above are simulations. The optional camera cursor runs entirely on this device.":"上方的手势按钮为模拟演示。可选的摄像头光标完全在本设备上运行。",
