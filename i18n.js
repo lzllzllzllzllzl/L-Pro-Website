@@ -279,7 +279,21 @@ var MAP={
 "Day, night and accessibility preferences.":"日间、夜间与无障碍偏好。",
 "New to L Pro?":"初次使用 L Pro？","Understand your zones and controls before your first session.":"在第一次护理前，先了解你的分区和控制方式。","Continue setup":"继续初始设置",
 "Setup steps":"设置步骤",
-"Woman comfortably positioned in the L Pro head care chamber":"女性舒适地位于 L Pro 头部护理舱中"
+"Woman comfortably positioned in the L Pro head care chamber":"女性舒适地位于 L Pro 头部护理舱中",
+// camera cursor (gesture-cursor.js)
+"CAMERA CURSOR":"摄像头光标","No mouse needed.":"不必使用鼠标。",
+"Your index finger becomes the cursor. Pinch thumb and index finger together to click, or use dwell mode. Video is processed on this device only — nothing is recorded or uploaded.":"食指就是你的光标。拇指与食指捏合即代表点击，也可以使用悬停模式。视频只在本设备上处理——不会被录制或上传。",
+"Turn on camera cursor":"开启摄像头光标","Turn off camera cursor":"关闭摄像头光标","Stop camera cursor":"关闭摄像头光标",
+"Dwell click — hold steady over a target instead of pinching":"悬停点击——对准目标稳定停留即可，无需捏合",
+"The gesture buttons above are simulations. The optional camera cursor runs entirely on this device.":"上方的手势按钮为模拟演示。可选的摄像头光标完全在本设备上运行。",
+"Camera unavailable. Use touch controls instead.":"摄像头不可用。请改用触控操作。",
+"Camera needs a secure connection. Open this page via localhost or https.":"摄像头需要安全连接。请通过 localhost 或 https 打开本页。",
+"Requesting camera…":"正在请求摄像头……","Loading hand tracking…":"正在加载手势识别……",
+"Camera permission denied. Allow it in the browser address bar, or use touch controls.":"摄像头权限被拒绝。请在浏览器地址栏中允许，或改用触控操作。",
+"Loading the hand model needs an internet connection.":"加载手势模型需要网络连接。",
+"Camera cursor stopped.":"摄像头光标已关闭。",
+"Pinch to click · Esc to exit":"捏合=点击 · 按 Esc 退出","Dwell click · Esc to exit":"悬停=点击 · 按 Esc 退出",
+"Show your hand to the camera.":"请把手伸到摄像头前。"
 };
 // Phrases with dynamic numbers/values that plain dictionary keys cannot cover.
 var SPECIALS=[
