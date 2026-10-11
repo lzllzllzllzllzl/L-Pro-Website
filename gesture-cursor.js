@@ -150,6 +150,41 @@ if(p>=1){fire(x,y);dwell.armed=false;dwell.t0=now+REARM_MS;
 setTimeout(function(){dwell.armed=true},REARM_MS)}
 }
 
+// Native <select> dropdowns ignore synthetic clicks (browser security), so a
+// pinch on one opens this custom picker instead; choosing an option sets the
+// value and dispatches change. The picker joins the select's dialog (if any)
+// so it renders above modals, and stays outside the gesture overlay so the
+// cursor's magnet can target its buttons.
+var openPickerEl=null,openSelect=null;
+function closePicker(){if(openPickerEl){openPickerEl.remove();openPickerEl=null;openSelect=null}}
+function openSelectPicker(select){
+closePicker();
+openSelect=select;
+const host=select.closest('dialog')||document.body;
+const r=select.getBoundingClientRect();
+const box=document.createElement('div');box.className='selectpicker';
+[...select.options].forEach(function(opt){
+if(opt.disabled)return;
+const b=document.createElement('button');b.type='button';
+b.className='pick'+(opt.selected?' on':'');
+b.textContent=(opt.selected?'✓ ':'')+opt.textContent;
+b.addEventListener('click',function(){
+select.value=opt.value;
+select.dispatchEvent(new Event('change',{bubbles:true}));
+closePicker();
+});
+box.append(b);
+});
+host.append(box);
+const bw=box.offsetWidth,bh=box.offsetHeight;
+let x=Math.min(Math.max(8,r.left),innerWidth-bw-8);
+let y=r.bottom+6;if(y+bh>innerHeight-8)y=Math.max(8,r.top-bh-6);
+box.style.left=x+'px';box.style.top=y+'px';
+openPickerEl=box;
+}
+document.addEventListener('click',function(e){
+if(openPickerEl&&!openPickerEl.contains(e.target)&&e.target!==openSelect)closePicker()});
+
 function fire(x,y){
 // With an active magnet the highlighted target IS the intended click target,
 // even if the filtered cursor has not fully arrived yet.
@@ -160,6 +195,9 @@ const els=document.elementsFromPoint(x,y)||[];
 const el=els.find(function(e){return !e.closest||!e.closest('[data-gesture-overlay]')});
 if(!el)return;
 target=el.closest(INTERACTIVE)||el}
+if(openPickerEl&&!openPickerEl.contains(target))closePicker();
+if(target.tagName==='SELECT'){openSelectPicker(target);return}
+if(target.tagName==='LABEL'){const s=target.querySelector('select');if(s){openSelectPicker(s);return}}
 const opts={bubbles:true,cancelable:true,view:window,clientX:x,clientY:y,pointerId:1,pointerType:'mouse',isPrimary:true};
 try{target.dispatchEvent(new PointerEvent('pointerdown',opts));target.dispatchEvent(new PointerEvent('pointerup',opts))}catch(e){}
 target.dispatchEvent(new MouseEvent('click',opts));
@@ -189,13 +227,14 @@ ctx.restore();
 function setMode(m){mode=m;localStorage.setItem('lpro-cursor-mode',m);
 if(active)status(m==='dwell'?'Dwell click · Esc to exit':'Pinch to click · Esc to exit')}
 
-window.addEventListener('keydown',function(e){if(e.key==='Escape'&&active)disable()});
+window.addEventListener('keydown',function(e){if(e.key==='Escape'){if(openPickerEl){closePicker();return}if(active)disable()}});
 window.addEventListener('beforeunload',function(){if(active)stopCamera()});
 
 window.GestureCursor={
 toggle:function(){active?disable():enable()},
 isActive:function(){return active},
 mode:function(){return mode},
-setMode:setMode
+setMode:setMode,
+fire:fire
 };
 })();
