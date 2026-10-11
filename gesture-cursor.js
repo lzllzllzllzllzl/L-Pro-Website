@@ -151,10 +151,15 @@ setTimeout(function(){dwell.armed=true},REARM_MS)}
 }
 
 function fire(x,y){
+// With an active magnet the highlighted target IS the intended click target,
+// even if the filtered cursor has not fully arrived yet.
+let target=null;
+if(magnetEl&&!magnetEl.disabled){target=magnetEl.closest(INTERACTIVE)||magnetEl}
+else{
 const els=document.elementsFromPoint(x,y)||[];
 const el=els.find(function(e){return !e.closest||!e.closest('[data-gesture-overlay]')});
 if(!el)return;
-const target=el.closest(INTERACTIVE)||el;
+target=el.closest(INTERACTIVE)||el}
 const opts={bubbles:true,cancelable:true,view:window,clientX:x,clientY:y,pointerId:1,pointerType:'mouse',isPrimary:true};
 try{target.dispatchEvent(new PointerEvent('pointerdown',opts));target.dispatchEvent(new PointerEvent('pointerup',opts))}catch(e){}
 target.dispatchEvent(new MouseEvent('click',opts));
