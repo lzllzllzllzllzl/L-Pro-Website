@@ -33,7 +33,7 @@ var t=document.getElementById('camera-cursor-toggle');if(t)t.textContent=active?
 
 function buildOverlay(){
 root=document.createElement('div');root.id='gesture-overlay';root.setAttribute('data-gesture-overlay','');
-root.innerHTML='<div class="gtoolbar"><button class="gscroll" aria-label="Scroll up" title="Scroll up" onclick="window.scrollBy({top:-Math.round(innerHeight*0.8),behavior:\'smooth\'})">⬆</button><button class="gscroll" aria-label="Scroll down" title="Scroll down" onclick="window.scrollBy({top:Math.round(innerHeight*0.8),behavior:\'smooth\'})">⬇</button><span id="gtool-status"></span><button id="gtool-close" aria-label="Stop camera cursor" title="Stop camera cursor">×</button></div>'
+root.innerHTML='<div class="gtoolbar"><button class="gscroll" aria-label="Scroll up" title="Scroll up" onclick="GestureCursor.scrollPage(-1)">⬆</button><button class="gscroll" aria-label="Scroll down" title="Scroll down" onclick="GestureCursor.scrollPage(1)">⬇</button><span id="gtool-status"></span><button id="gtool-close" aria-label="Stop camera cursor" title="Stop camera cursor">×</button></div>'
 +'<div class="gvideo-wrap"><video id="gvideo" playsinline muted></video><canvas id="gcanvas" width="176" height="132"></canvas></div>'
 +'<div class="gcursor" id="gcursor"><div class="gcursor-ring"></div><div class="gcursor-dot"></div></div>'
 +'<div class="gmagnet" id="gmagnet"></div>';
@@ -95,15 +95,19 @@ rafId=requestAnimationFrame(loop);
 
 // Edge auto-scroll: hold the cursor near the viewport's top or bottom edge to
 // scroll that way; speed ramps with depth. Skips magnet targeting so edge
-// elements don't tug the cursor out of the scroll zone.
+// elements don't tug the cursor out of the scroll zone. While a modal dialog
+// is open it is the visible surface, so it scrolls instead of the page.
 var EDGE_MIN=56;
+function scrollTarget(){return document.querySelector('dialog[open]')}
 function edgeScroll(sy){
 const zone=Math.max(EDGE_MIN,innerHeight*0.1);
 let depth=0,dir=0;
 if(sy<zone){depth=(zone-sy)/zone;dir=-1}
 else if(sy>innerHeight-zone){depth=(sy-(innerHeight-zone))/zone;dir=1}
 if(!depth)return false;
-window.scrollBy(0,(2+depth*13)*dir);
+const v=(2+depth*13)*dir;
+const dlg=scrollTarget();
+if(dlg)dlg.scrollBy(0,v);else window.scrollBy(0,v);
 return true}
 
 function process(res){
@@ -263,6 +267,10 @@ toggle:function(){active?disable():enable()},
 isActive:function(){return active},
 mode:function(){return mode},
 setMode:setMode,
-fire:fire
+fire:fire,
+scrollPage:function(dir){
+const dlg=scrollTarget();
+const amt=Math.round((dlg?(dlg.clientHeight||dlg.offsetHeight):innerHeight)*0.8)*dir;
+if(dlg)dlg.scrollBy(0,amt);else window.scrollBy(0,amt)}
 };
 })();
