@@ -97,7 +97,9 @@ function process(res){
 const hands=res&&res.landmarks;
 latestLandmarks=hands&&hands.length?hands[0]:null;
 if(!hands||!hands.length){lostFrames++;
-if(lostFrames>6){handSeen=false;pinched=false;dwell.armed=true;cursorEl&&cursorEl.classList.add('dim');ringEl&&(ringEl.style.background='')}
+if(lostFrames>6){handSeen=false;pinched=false;dwell.armed=true;cursorEl&&cursorEl.classList.add('dim');ringEl&&(ringEl.style.background='');
+// Stale magnet would redirect the next pinch to an old target — clear it.
+magnetEl=null;magnetElBox&&(magnetElBox.style.cssText='opacity:0')}
 return}
 lostFrames=0;handSeen=true;
 const lm=hands[0];
@@ -186,10 +188,10 @@ document.addEventListener('click',function(e){
 if(openPickerEl&&!openPickerEl.contains(e.target)&&e.target!==openSelect)closePicker()});
 
 function fire(x,y){
-// With an active magnet the highlighted target IS the intended click target,
-// even if the filtered cursor has not fully arrived yet.
+// With the hand currently tracked, the highlighted magnet target IS the
+// intended click target even if the filtered cursor has not fully arrived.
 let target=null;
-if(magnetEl&&!magnetEl.disabled){target=magnetEl.closest(INTERACTIVE)||magnetEl}
+if(magnetEl&&handSeen&&!magnetEl.disabled){target=magnetEl.closest(INTERACTIVE)||magnetEl}
 else{
 const els=document.elementsFromPoint(x,y)||[];
 const el=els.find(function(e){return !e.closest||!e.closest('[data-gesture-overlay]')});
@@ -226,6 +228,17 @@ ctx.restore();
 
 function setMode(m){mode=m;localStorage.setItem('lpro-cursor-mode',m);
 if(active)status(m==='dwell'?'Dwell click · Esc to exit':'Pinch to click · Esc to exit')}
+
+// Modal <dialog>s render in the browser's top layer, above every body-level
+// element no matter its z-index — so while one is open the overlay (cursor,
+// magnet, preview) must live inside that dialog to stay visible and aimable.
+new MutationObserver(function(){
+if(!active||!root)return;
+const dlg=document.querySelector('dialog[open]');
+if(dlg&&root.parentElement!==dlg)dlg.append(root);
+else if(!dlg&&root.parentElement!==document.body)document.body.append(root);
+if(!dlg&&openPickerEl)closePicker();
+}).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['open']});
 
 window.addEventListener('keydown',function(e){if(e.key==='Escape'){if(openPickerEl){closePicker();return}if(active)disable()}});
 window.addEventListener('beforeunload',function(){if(active)stopCamera()});
